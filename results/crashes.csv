@@ -1,0 +1,16 @@
+seed,fog,degrade_start_h,fail_h,recover_h,predictable,predicted,lead_time_s
+1000,fog-0-library,5.7379,5.8766,6.1664,true,true,340.0036
+1000,fog-0-library,-1.0000,7.5890,7.8228,false,false,0.0000
+1000,fog-1-hostels,8.4291,8.4847,8.9031,true,true,159.3024
+1000,fog-3-main-gate,11.2878,11.4793,11.9239,true,true,515.3765
+1000,fog-3-main-gate,14.0292,14.0935,14.3754,true,true,132.5358
+1000,fog-3-main-gate,15.5526,15.7157,16.1662,true,true,490.6243
+1001,fog-0-library,1.1386,1.2872,1.5814,true,true,392.3887
+1001,fog-2-engineering,16.3796,16.5672,16.7400,true,true,508.5702
+1001,fog-3-main-gate,11.2768,11.4295,11.6797,true,true,441.5164
+1002,fog-0-library,-1.0000,0.7847,1.2140,false,false,0.0000
+1002,fog-0-library,9.5837,9.7772,10.1053,true,true,538.3381
+1002,fog-0-library,12.7391,12.8804,13.3313,true,true,335.8313
+1002,fog-0-library,23.0546,23.1117,23.4193,true,true,112.3565
+1002,fog-2-engineering,6.9359,7.0760,7.5262,true,true,340.2714
+1002,fog-2-engineering,12.0946,12.2171,12.6963,true,true,396.3453

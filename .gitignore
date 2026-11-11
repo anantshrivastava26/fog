@@ -1,0 +1,7 @@
+build/
+*.class
+__pycache__/
+.idea/
+.vscode/
+*.iml
+results/quick.csv

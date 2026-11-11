@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fog Carbon Lab</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="vendor/chart.umd.min.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <h1>Fog Carbon Lab</h1>
+    <p>Carbon- and latency-aware task offloading with reinforcement learning and proactive failure migration</p>
+  </div>
+  <div class="spacer"></div>
+  <span class="pill ok" title="Simulation engine"><span class="dot"></span>Engine: iFogSim 2 + CloudSim 7</span>
+  <span class="pill" id="train-pill"><span class="dot"></span><span id="train-pill-text">checking agents...</span></span>
+  <button class="icon-btn" id="theme-btn" title="Toggle light/dark theme">Theme</button>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" data-tab="simulate" aria-selected="true">Simulate</button>
+  <button role="tab" data-tab="campus" aria-selected="false">Campus replay</button>
+  <button role="tab" data-tab="experiments" aria-selected="false">Experiments</button>
+  <button role="tab" data-tab="sensors" aria-selected="false">Sensor data</button>
+  <button role="tab" data-tab="about" aria-selected="false">How it works</button>
+</nav>
+
+<main>
+  <!-- ======================= SIMULATE ======================= -->
+  <section class="tab active" id="tab-simulate">
+    <div class="sim-layout">
+      <aside class="card sticky">
+        <div class="field">
+          <div class="label">Scheduling policies</div>
+          <div class="check-list" id="policy-list"></div>
+          <div class="links">
+            <button id="preset-all">All</button>
+            <button id="preset-key">Proposed vs key baselines</button>
+            <button id="preset-rl">RL only</button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="label">Fault handling</div>
+          <div class="segmented" id="fault-mode">
+            <label><input type="radio" name="fault" value="NO_RECOVERY"><span>None</span></label>
+            <label><input type="radio" name="fault" value="REACTIVE"><span>Reactive</span></label>
+            <label><input type="radio" name="fault" value="PROACTIVE" checked><span>Proactive</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <label for="in-hours">Simulated time <output id="out-hours">24 h</output></label>
+          <input type="range" id="in-hours" min="1" max="48" step="1" value="24">
+        </div>
+        <div class="field">
+          <label for="in-load">IoT workload <output id="out-load">1.0x</output></label>
+          <input type="range" id="in-load" min="0.5" max="2" step="0.1" value="1">
+        </div>
+        <div class="field">
+          <label for="in-crash">Crashes per fog node per day <output id="out-crash">1</output></label>
+          <input type="range" id="in-crash" min="0" max="4" step="0.5" value="1">
+        </div>
+        <div class="field">
+          <label for="in-seed">Random seed <output>weather, traffic, faults</output></label>
+          <input type="number" id="in-seed" value="1000" min="1">
+        </div>
+        <button class="btn" id="run-btn">Run simulation</button>
+        <div class="progress"><div id="run-progress"></div></div>
+        <div class="status-msg" id="run-status">About 2-3 s per policy per simulated day.</div>
+
+        <div class="divider"></div>
+        <h3>Train the RL agents</h3>
+        <p class="hint">Trains both Q-learning agents on fresh simulated days (≈4 s per day each) and saves their Q-tables.</p>
+        <div class="field">
+          <label for="in-days">Training days <output id="out-days">12</output></label>
+          <input type="range" id="in-days" min="1" max="30" step="1" value="12">
+        </div>
+        <button class="btn secondary" id="train-btn">Train agents</button>
+        <div class="progress"><div id="train-progress"></div></div>
+        <div class="status-msg" id="train-status"></div>
+      </aside>
+
+      <div id="sim-results">
+        <div class="empty">
+          <h2>Run a simulation</h2>
+          <p>Pick one or more policies and press <b>Run simulation</b>. Each run builds the smart campus in iFogSim
+            (24 IoT devices, 4 fog nodes, 1 cloud), streams simulated sensor data through it and reports latency, energy and carbon.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= CAMPUS REPLAY ======================= -->
+  <section class="tab" id="tab-campus">
+    <div id="campus-empty" class="empty">
+      <h2>No run to replay yet</h2>
+      <p>Run a simulation on the <b>Simulate</b> tab, then come back to watch the campus hour by hour.</p>
+    </div>
+    <div id="campus-content" hidden>
+      <div class="campus-layout">
+        <div class="card">
+          <div class="replay-controls">
+            <button class="icon-btn" id="play-btn">Play</button>
+            <span class="clock" id="clock">00:00</span>
+            <input type="range" id="hour-slider" min="0" max="23" value="0" aria-label="Hour">
+            <select id="replay-policy" aria-label="Policy to replay"></select>
+          </div>
+          <svg id="campus-svg" viewBox="0 0 1100 640" role="img" aria-label="Campus fog topology"></svg>
+          <div class="legend">
+            <span><span class="ramp"></span>CPU utilisation (low to high)</span>
+            <span><svg width="16" height="16"><circle cx="8" cy="8" r="6" fill="#eda100"/></svg>Rooftop solar output</span>
+            <span><svg width="22" height="10"><line x1="1" y1="5" x2="21" y2="5" stroke="#eb6834" stroke-width="4"/></svg>Tasks to fog nodes</span>
+            <span><svg width="22" height="10"><line x1="1" y1="5" x2="21" y2="5" stroke="#2a78d6" stroke-width="4"/></svg>Tasks to cloud (line width = tasks/hour)</span>
+            <span><svg width="10" height="10"><rect width="10" height="10" rx="2" fill="#6250d6"/></svg>Run on the device</span>
+            <span><svg width="16" height="16"><path d="M3 3L13 13M13 3L3 13" stroke="#d03b3b" stroke-width="3"/></svg>Node crashed</span>
+          </div>
+        </div>
+        <aside>
+          <div class="card">
+            <div class="card-head"><h2 id="hour-title">Hour</h2></div>
+            <dl class="stat-list" id="hour-stats"></dl>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Nodes this hour</h2><p>iFogSim FogDevices; click for details</p></div>
+            <div id="node-rows"></div>
+            <div class="divider"></div>
+            <div id="node-detail" class="hint">Select a node in the diagram.</div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= EXPERIMENTS ======================= -->
+  <section class="tab" id="tab-experiments">
+    <div id="exp-content"></div>
+  </section>
+
+  <!-- ======================= SENSORS ======================= -->
+  <section class="tab" id="tab-sensors">
+    <div class="card">
+      <div class="card-head">
+        <h2>Simulated IoT sensor streams</h2>
+        <p>Every campus sensor publishes JSON messages (MQTT / AWS IoT Core style topics). No physical devices needed.</p>
+      </div>
+      <div class="inline-controls">
+        <div class="field">
+          <label for="sn-hour">Time of day <output id="sn-hour-out">09:00</output></label>
+          <input type="range" id="sn-hour" min="0" max="23" step="1" value="9">
+        </div>
+        <div class="field">
+          <label for="sn-min">Window</label>
+          <select id="sn-min">
+            <option value="0.5">30 seconds</option>
+            <option value="1" selected>1 minute</option>
+            <option value="3">3 minutes</option>
+          </select>
+        </div>
+        <button class="btn" id="sn-btn">Generate stream</button>
+      </div>
+      <div class="status-msg" id="sn-status"></div>
+      <div class="chips" id="sn-chips"></div>
+    </div>
+    <div class="sensor-layout" style="margin-top:16px">
+      <div class="card">
+        <div class="card-head"><h2>Message feed</h2><p id="sn-feed-sub"></p></div>
+        <div class="feed" id="sn-feed"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h2>Selected message</h2><p>as received by the fog orchestrator</p></div>
+        <pre class="json" id="sn-json">Select a message.</pre>
+        <div class="divider"></div>
+        <div class="chart-title" id="sn-chart-title">Reading over the window</div>
+        <div class="chart-sub" id="sn-chart-sub"></div>
+        <div class="chart-box small"><canvas id="sn-chart"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= HOW IT WORKS ======================= -->
+  <section class="tab" id="tab-about">
+    <div class="card prose">
+      <h2>How the system works</h2>
+      <p>A smart-campus fog network where every sensor reading becomes a compute task. A reinforcement-learning
+        scheduler decides <b>where</b> each task runs (on the device, on a fog node, or in the cloud), trading off
+        latency, energy and carbon. A health monitor predicts fog-node crashes and moves work away before they happen.</p>
+      <div class="steps">
+        <div class="step"><span class="n">1 · SENSE</span><b>Simulated sensors</b><span>Cameras, ECG wearables, traffic, air-quality and smart meters publish JSON messages with realistic daily patterns.</span></div>
+        <div class="step"><span class="n">2 · DECIDE</span><b>Fog orchestrator</b><span>Encodes the task and system state; the Q-learning agent picks device / home fog / fastest fog / greenest fog / cloud.</span></div>
+        <div class="step"><span class="n">3 · EXECUTE</span><b>iFogSim FogDevices</b><span>Data crosses Wi-Fi, LAN or WAN links; the node runs it on its cores and draws power via FogLinearPowerModel.</span></div>
+        <div class="step"><span class="n">4 · LEARN</span><b>Reward</b><span>When the result returns, latency, energy and carbon (solar vs grid, time of day) form the reward that updates the Q-table.</span></div>
+        <div class="step"><span class="n">5 · PROTECT</span><b>Proactive migration</b><span>Heartbeat telemetry (heat, ECC errors) gives a crash-risk score; at-risk nodes are drained and their queues migrated.</span></div>
+      </div>
+
+      <h3>Where iFogSim is used</h3>
+      <ul>
+        <li>Every IoT device, fog node and the cloud is an <code>org.fog.entities.FogDevice</code> (a CloudSim <code>PowerDatacenter</code>) with a <code>PowerHost</code>, one <code>Pe</code> per CPU core and iFogSim's <code>FogLinearPowerModel</code> (idle → max watts).</li>
+        <li>The topology uses iFogSim's levels and parent links (cloud = level 0, fog = 1, devices = 2; <code>setParentId</code>, <code>setUplinkLatency</code>).</li>
+        <li>Sensors, the failure injector and the orchestrator are CloudSim <code>SimEntity</code>s exchanging timed events on the discrete-event engine (<code>CloudSim.init / startSimulation</code>).</li>
+        <li>iFogSim's static module placement is replaced by a per-task offloading layer, because the RL decision has to be made for every task at run time.</li>
+      </ul>
+
+      <h3>The RL agent (tabular Q-learning)</h3>
+      <ul>
+        <li><b>State (4,320):</b> task type × load of home fog / best other fog / cloud relative to the deadline × carbon regime (solar / partial / grid) of home and greenest fog × can the device meet the deadline alone.</li>
+        <li><b>Actions (5):</b> local, home fog, fastest other fog, greenest other fog, cloud. Crashed or drained nodes are masked.</li>
+        <li><b>Reward:</b> −(0.3·latency/deadline + 0.3·energy/E<sub>ref</sub> + 1.0·carbon/C<sub>ref</sub> + 2·[deadline missed]); −4 if the task was lost in a crash.</li>
+        <li><b>Training:</b> ε-greedy (1.0 → 0.03), learning rate 1/√n, γ = 0.3, 12 simulated days with new weather, traffic and faults each day.</li>
+      </ul>
+
+      <h3>Fault tolerance</h3>
+      <ul>
+        <li><b>None:</b> a crash is noticed after 3 missed heartbeats (6.5 s); tasks on the node are lost.</li>
+        <li><b>Reactive:</b> same detection, but lost tasks are re-sent from the device (they arrive seconds late).</li>
+        <li><b>Proactive:</b> risk ≥ 0.8 for 5 heartbeats raises an alarm; the node is drained and its queue migrated before it dies. Sudden crashes (e.g. power cuts) fall back to reactive.</li>
+      </ul>
+
+      <h3>Syllabus mapping</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Unit</th><th>Topic</th><th>In this project</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Edge vs fog, fog nodes, sensors, healthcare</td><td>Device / fog / cloud tiers, ECG wearable workload</td></tr>
+          <tr><td>2</td><td>iFogSim modelling and simulation</td><td>FogDevice topology, power model, CloudSim event engine</td></tr>
+          <tr><td>3</td><td>JSON protocol, fog-IoT and fog-cloud interfaces, SDN</td><td>JSON/MQTT messages, Wi-Fi / LAN / WAN links, central orchestrator</td></tr>
+          <tr><td>4</td><td>QoS, computation offloading, smart traffic light, wearables</td><td>Deadline-aware RL offloading, traffic and ECG case studies, failure handling</td></tr>
+          <tr><td>5</td><td>Fog vs cloud analytics</td><td>Air-quality and smart-meter analytics placed by carbon and latency</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </section>
+</main>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+policy,node,description,tasks_executed,utilisation_pct,energy_kJ,carbon_g,downtime_min,tasks_hit_by_crash
+local-only,fog-0-library,"Library edge server (Xeon-D, rooftop PV)",0,0.0000,5581.9505,679.9276,31.4165,0
+local-only,fog-1-hostels,"Hostel gateway cluster (4x Jetson, small PV)",0,0.0000,1699.0794,201.8988,25.1005,0
+local-only,fog-2-engineering,Engineering micro-datacenter (grid only),0,0.0000,13487.7600,2513.8902,0.0000,0
+local-only,fog-3-main-gate,Main-gate roadside unit (rooftop PV),0,0.0000,3733.8081,446.1196,26.6788,0
+local-only,cloud,Public cloud region (renewable-rich grid),0,0.0000,0.0000,0.0000,0.0000,0
+local-only,all-iot-devices,24 battery IoT devices,735080,47.8321,7839.2142,1455.5668,0.0000,0
+cloud-only,fog-0-library,"Library edge server (Xeon-D, rooftop PV)",0,0.0000,5581.9505,679.9276,31.4165,0
+cloud-only,fog-1-hostels,"Hostel gateway cluster (4x Jetson, small PV)",0,0.0000,1699.0794,201.8988,25.1005,0
+cloud-only,fog-2-engineering,Engineering micro-datacenter (grid only),0,0.0000,13487.7600,2513.8902,0.0000,0
+cloud-only,fog-3-main-gate,Main-gate roadside unit (rooftop PV),0,0.0000,3733.8081,446.1196,26.6788,0
+cloud-only,cloud,Public cloud region (renewable-rich grid),847720,4.0294,5124.6585,224.4633,0.0000,0
+cloud-only,all-iot-devices,24 battery IoT devices,0,0.0000,4565.0880,850.8552,0.0000,0
+nearest-fog,fog-0-library,"Library edge server (Xeon-D, rooftop PV)",167581,23.4558,7588.2622,932.3223,31.4165,14
+nearest-fog,fog-1-hostels,"Hostel gateway cluster (4x Jetson, small PV)",235920,32.1365,2809.7152,355.8497,25.1005,0
+nearest-fog,fog-2-engineering,Engineering micro-datacenter (grid only),185646,11.0326,15718.2813,2919.8141,0.0000,0
+nearest-fog,fog-3-main-gate,Main-gate roadside unit (rooftop PV),258573,27.5926,5569.4913,692.5641,26.6788,0
+nearest-fog,cloud,Public cloud region (renewable-rich grid),0,0.0000,0.0000,0.0000,0.0000,0
+nearest-fog,all-iot-devices,24 battery IoT devices,0,0.0000,4565.0880,850.8552,0.0000,0
+random,fog-0-library,"Library edge server (Xeon-D, rooftop PV)",136914,13.8843,6769.5618,825.5601,31.4165,18
+random,fog-1-hostels,"Hostel gateway cluster (4x Jetson, small PV)",138221,27.8973,2663.2111,325.5348,25.1005,0
+random,fog-2-engineering,Engineering micro-datacenter (grid only),143216,6.2006,14741.3801,2741.5408,0.0000,0
+random,fog-3-main-gate,Main-gate roadside unit (rooftop PV),142075,19.2409,5013.8638,616.4146,26.6788,0
+random,cloud,Public cloud region (renewable-rich grid),143342,0.6827,868.3047,38.0419,0.0000,0
+random,all-iot-devices,24 battery IoT devices,143952,9.7763,5234.0706,972.3716,0.0000,0
+latency-greedy,fog-0-library,"Library edge server (Xeon-D, rooftop PV)",22120,1.8409,5739.4135,691.5479,31.4165,4
+latency-greedy,fog-1-hostels,"Hostel gateway cluster (4x Jetson, small PV)",13730,0.1998,1705.9837,202.4691,25.1005,0
+latency-greedy,fog-2-engineering,Engineering micro-datacenter (grid only),786925,26.9830,18943.0766,3497.0656,0.0000,0
+latency-greedy,fog-3-main-gate,Main-gate roadside unit (rooftop PV),2346,0.1004,3740.4855,446.6342,26.6788,0
+latency-greedy,cloud,Public cloud region (renewable-rich grid),22495,0.9836,1250.9766,58.0154,0.0000,0
+latency-greedy,all-iot-devices,24 battery IoT devices,104,0.0005,4565.1246,850.8620,0.0000,0
+carbon-greedy,fog-0-library,"Library edge server (Xeon-D, rooftop PV)",112391,12.3271,6636.3606,717.8588,31.4165,10
+carbon-greedy,fog-1-hostels,"Hostel gateway cluster (4x Jetson, small PV)",103684,10.2570,2053.5625,220.7995,25.1005,0
+carbon-greedy,fog-2-engineering,Engineering micro-datacenter (grid only),3536,0.1215,13512.3253,2518.4296,0.0000,0
+carbon-greedy,fog-3-main-gate,Main-gate roadside unit (rooftop PV),75204,9.8231,4387.3176,476.4956,26.6788,0
+carbon-greedy,cloud,Public cloud region (renewable-rich grid),435179,2.8080,3571.1750,170.4000,0.0000,0
+carbon-greedy,all-iot-devices,24 battery IoT devices,117726,0.6351,4608.5501,859.1856,0.0000,0
+rl-latency-only,fog-0-library,"Library edge server (Xeon-D, rooftop PV)",93087,7.9779,6264.3469,787.3200,31.4165,4
+rl-latency-only,fog-1-hostels,"Hostel gateway cluster (4x Jetson, small PV)",8068,0.8278,1727.6868,206.2254,25.1005,0
+rl-latency-only,fog-2-engineering,Engineering micro-datacenter (grid only),709414,23.7551,18290.4699,3373.7143,0.0000,0
+rl-latency-only,fog-3-main-gate,Main-gate roadside unit (rooftop PV),14488,1.5223,3835.0837,455.9862,26.6788,0
+rl-latency-only,cloud,Public cloud region (renewable-rich grid),22655,0.9843,1251.8714,58.0357,0.0000,0
+rl-latency-only,all-iot-devices,24 battery IoT devices,8,0.0001,4565.0956,850.8566,0.0000,0
+rl-carbon-aware,fog-0-library,"Library edge server (Xeon-D, rooftop PV)",85719,9.4724,6392.1775,704.6563,31.4165,11
+rl-carbon-aware,fog-1-hostels,"Hostel gateway cluster (4x Jetson, small PV)",82879,3.7751,1829.5473,204.8374,25.1005,0
+rl-carbon-aware,fog-2-engineering,Engineering micro-datacenter (grid only),105992,2.4285,13978.7457,2603.1500,0.0000,0
+rl-carbon-aware,fog-3-main-gate,Main-gate roadside unit (rooftop PV),68863,7.9397,4262.0186,466.5943,26.6788,0
+rl-carbon-aware,cloud,Public cloud region (renewable-rich grid),405292,2.9180,3711.1822,173.0219,0.0000,0
+rl-carbon-aware,all-iot-devices,24 battery IoT devices,98975,0.4857,4598.3218,857.3073,0.0000,0
